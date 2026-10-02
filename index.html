@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>근대 철학 배틀: 진리를 향한 탐구 (Modern Philosophy Battle)</title>
+  <style>
+    /* ==========================================================================
+       1. CORE DESIGN SYSTEM & DARK ACADEMIA THEME
+       ========================================================================== */
+    :root {
+      --bg-dark: #0b0e14;
+      --bg-card: #161b26;
+      --bg-card-hover: #202738;
+      --bg-panel: #111520;
+      
+      --accent-gold: #fbbf24;
+      --accent-gold-glow: rgba(251, 191, 36, 0.35);
+      --accent-crimson: #ef4444;
+      --accent-crimson-glow: rgba(239, 68, 68, 0.35);
+      --accent-cyan: #38bdf8;
+      --accent-cyan-glow: rgba(56, 189, 248, 0.35);
+      --accent-emerald: #34d399;
+      --accent-purple: #a855f7;
+
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #2e374a;
+      --border-gold: #b45309;
+
+      --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --font-serif: 'Georgia', 'Cinzel', 'Cambria', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Canvas Effect background */
+    #ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(30, 41, 59, 0.6) 0%, rgba(11, 14, 20, 0.95) 80%);
+    }
+
+    /* Outer Wrapper Container */
+    #app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1100px;
+      min-height: 750px;
+      margin: 20px auto;
+      background: rgba(22, 27, 38, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(251, 191, 36, 0.05);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Common Screen Container */
+    .screen {
+      display: none !important;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      padding: 30px;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .screen.active {
+      display: flex !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography Utilities */
+    h1, h2, h3 {
+      font-family: var(--font-serif);
+      color: var(--accent-gold);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+      letter-spacing: 0.5px;
+    }
+
+    /* UI Buttons */
+    .btn {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--accent-gold-glow);
+      color: var(--accent-gold);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      border-color: var(--accent-gold);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #000;
+      box-shadow: 0 0 25px var(--accent-gold-glow);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+      border-color: var(--accent-crimson);
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 0 20px var(--accent-crimson-glow);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    /* Input Field */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .input-group label {
+      font-size: 0.95rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .input-field {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 15px var(--accent-gold-glow);
+    }
+
+    /* ==========================================================================
+       2. START SCREEN
+       ========================================================================== */
+    #screen-start {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      padding: 50px 20px;
+    }
+
+    .game-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-tag {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      font-size: 0.85rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .game-logo h1 {
+      font-size: 2.8rem;
+      line-height: 1.2;
+    }
+
+    .game-logo p {
+      color: var(--text-sub);
+      font-size: 1.1rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .menu-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(17, 21, 32, 0.7);
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .menu-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    /* ==========================================================================
+       3. BATTLE ARENA SCREEN
+       ========================================================================== */
+    #screen-battle {
+      padding: 20px;
+      gap: 15px;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    /* Top Status Bar */
+    .battle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(17, 21, 32, 0.9);
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stage-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stage-badge {
+      background: var(--accent-gold);
+      color: #000;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .stage-title {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 1.05rem;
+    }
+
+    .player-stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hp-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 180px;
+    }
+
+    .hp-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .hp-bar-bg {
+      flex: 1;
+      height: 12px;
+      background: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .hp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      width: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .hp-bar-fill.boss {
+      background: linear-gradient(90deg, #dc2626, #ef4444);
+    }
+
+    .score-badge {
+      font-family: monospace;
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    /* Main Battle Arena (Split layout) */
+    .battle-main {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      flex: 1;
+      min-height: 480px;
+    }
+
+    /* Boss Profile Panel */
+    .boss-panel {
+      background: rgba(17, 21, 32, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .boss-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold));
+    }
+
+    .boss-avatar-frame {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid var(--accent-gold);
+      box-shadow: 0 0 20px var(--accent-gold-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4.5rem;
+      background: radial-gradient(circle, #2d3748 0%, #1a202c 100%);
+      margin-top: 10px;
+      position: relative;
+    }
+
+    .boss-name-box {
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .boss-name {
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+    }
+
+    .boss-tagline {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .boss-hp-box {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .boss-hp-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-crimson);
+      margin-bottom: 4px;
+    }
+
+    .boss-dialogue-bubble {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.8);
+      border-left: 3px solid var(--accent-gold);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      margin-top: 15px;
+      min-height: 90px;
+      font-style: italic;
+    }
+
+    /* Action Arena (Cards & Questions) */
+    .action-arena {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .question-card {
+      background: rgba(22, 27, 38, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .round-tag {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .question-body {
+      font-size: 1.02rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .battle-card {
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+    }
+
+    .battle-card:hover {
+      border-color: var(--accent-gold);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px var(--accent-gold-glow);
+      background: linear-gradient(145deg, #283548 0%, #131c2e 100%);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-concept {
+      font-size: 0.75rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+      font-size: 1.2rem;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* Feedback Log Window */
+    .feedback-panel {
+      background: rgba(11, 14, 20, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .feedback-panel.correct {
+      border-left: 4px solid var(--accent-emerald);
+      background: rgba(6, 78, 59, 0.3);
+    }
+
+    .feedback-panel.wrong {
+      border-left: 4px solid var(--accent-crimson);
+      background: rgba(127, 29, 29, 0.3);
+    }
+
+    .feedback-title {
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-panel.correct .feedback-title { color: var(--accent-emerald); }
+    .feedback-panel.wrong .feedback-title { color: var(--accent-crimson); }
+
+    /* ==========================================================================
+       4. GLOSSARY SCREEN
+       ========================================================================== */
+    #screen-glossary {
+      gap: 20px;
+    }
+
+    .glossary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+    }
+
+    .glossary-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .glossary-tab {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .glossary-tab.active, .glossary-tab:hover {
+      background: var(--accent-gold);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent-gold);
+    }
+
+    .glossary-content-card {
+      background: rgba(17, 21, 32, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .glossary-hero {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+    }
+
+    .glossary-avatar {
+      font-size: 3.5rem;
+      width: 90px;
+      height: 90px;
+      background: #1e293b;
+      border: 2px solid var(--accent-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glossary-concepts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .concept-item {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .concept-item h4 {
+      color: var(--accent-cyan);
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .concept-item p {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       5. RANKING BOARD (HALL OF FAME)
+       ========================================================================== */
+    #screen-ranking {
+      gap: 20px;
+    }
+
+    .ranking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+    }
+
+    .ranking-table-container {
+      flex: 1;
+      overflow-y: auto;
+      background: rgba(17, 21, 32, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+
+    table.ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    table.ranking-table th {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--accent-gold);
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table.ranking-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(46, 55, 74, 0.5);
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    table.ranking-table tr:hover {
+      background: rgba(251, 191, 36, 0.05);
+    }
+
+    .rank-num {
+      font-weight: 800;
+      width: 50px;
+      text-align: center;
+    }
+    .rank-1 { color: #fbbf24; font-size: 1.2rem; }
+    .rank-2 { color: #e2e8f0; font-size: 1.1rem; }
+    .rank-3 { color: #b45309; font-size: 1.05rem; }
+
+    .title-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid var(--accent-purple);
+    }
+
+    /* ==========================================================================
+       6. RESULT SCREEN
+       ========================================================================== */
+    #screen-result {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .result-card {
+      background: rgba(17, 21, 32, 0.95);
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 40px var(--accent-gold-glow);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 550px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .grade-stamp {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      text-shadow: 0 0 20px var(--accent-gold-glow);
+      line-height: 1;
+    }
+
+    .result-score {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .result-eval {
+      font-size: 1.1rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* Floating combat text animation */
+    .dmg-popup {
+      position: absolute;
+      font-weight: 900;
+      font-size: 1.8rem;
+      animation: floatUp 0.8s ease-out forwards;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      50% { opacity: 1; transform: translateY(-30px) scale(1.3); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .battle-main {
+        grid-template-columns: 1fr;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .game-logo h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <div id="ambient-bg"></div>
+
+  <!-- App Main Wrapper -->
+  <div id="app-container">
+
+    <!-- ==========================================
+         1. START SCREEN
+         ========================================== -->
+    <div id="screen-start" class="screen active">
+      <div class="game-logo">
+        <span class="badge-tag">ACADEMIC RPG BATTLE</span>
+        <h1>근대 철학 배틀: 진리를 향한 탐구</h1>
+        <p>데카르트, 스피노자, 로크, 흄, 칸트, 니체에 이르는 근대 철학의 정수를 사유의 논리 배틀로 정복하라!</p>
+      </div>
+
+      <div class="menu-box">
+        <div class="input-group">
+          <label for="player-nickname">철학자 닉네임 (Philosopher Nickname)</label>
+          <input type="text" id="player-nickname" class="input-field" placeholder="예: 이성의 파수꾼, 순수이성" maxlength="12">
+        </div>
+
+        <div class="menu-actions">
+          <button class="btn btn-primary" onclick="startGame()">
+            <span>⚔️ 철학 논쟁 전투 개시 (Start Battle)</span>
+          </button>
+          <button class="btn" onclick="showScreen('screen-glossary')">
+            <span>📜 철학 사전 (Philosophy Glossary)</span>
+          </button>
+          <button class="btn" onclick="showScreen('screen-ranking')">
+            <span>🏆 명예의 전당 (Hall of Fame)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         2. BATTLE ARENA SCREEN
+         ========================================== -->
+    <div id="screen-battle" class="screen">
+      <!-- Top Header -->
+      <div class="battle-header">
+        <div class="stage-indicator">
+          <span class="stage-badge" id="stage-num-badge">STAGE 1</span>
+          <span class="stage-title" id="stage-title-text">데카르트: 방법적 회의</span>
+        </div>
+
+        <div class="player-stats">
+          <div class="hp-container">
+            <span class="hp-label">이성의 빛 HP</span>
+            <div class="hp-bar-bg">
+              <div class="hp-bar-fill" id="player-hp-fill"></div>
+            </div>
+          </div>
+          <div class="score-badge">SCORE: <span id="score-display">0</span></div>
+          <button class="btn btn-sm" onclick="toggleAudio()" id="audio-toggle-btn">🔊</button>
+        </div>
+      </div>
+
+      <!-- Main Battle Split -->
+      <div class="battle-main">
+        <!-- Boss Panel -->
+        <div class="boss-panel">
+          <div class="boss-avatar-frame" id="boss-avatar">🧠</div>
+          <div class="boss-name-box">
+            <h3 class="boss-name" id="boss-name">르네 데카르트</h3>
+            <p class="boss-tagline" id="boss-tagline">"나는 생각한다, 고로 존재한다"</p>
+          </div>
+
+          <div class="boss-hp-box">
+            <div class="boss-hp-text">
+              <span>학설의 견고함 (Boss HP)</span>
+              <span id="boss-hp-num">100 / 100</span>
+            </div>
+            <div class="hp-bar-bg">
+              <div class="hp-bar-fill boss" id="boss-hp-fill"></div>
+            </div>
+          </div>
+
+          <div class="boss-dialogue-bubble" id="boss-dialogue">
+            "자네가 감각하는 모든 것은 악마의 환영일지도 모르네. 결코 의심할 수 없는 확실한 진리를 제시할 수 있겠는가?"
+          </div>
+        </div>
+
+        <!-- Action Arena -->
+        <div class="action-arena">
+          <!-- Question / Dilemma Box -->
+          <div class="question-card">
+            <div class="question-header">
+              <span class="round-tag" id="round-tag">ROUND 1/3</span>
+              <span class="question-title" id="question-title">사유 실험: 감각의 불확실성</span>
+            </div>
+            <p class="question-body" id="question-text">
+              전능한 악마가 너의 감각과 이성을 완전히 속이고 있다고 가정하자. 그렇다면 이 세상에서 의심할 수 없는 유일한 명제는 무엇인가?
+            </p>
+          </div>
+
+          <!-- Counter Cards Grid -->
+          <div class="cards-grid" id="cards-container">
+            <!-- Dynamic Cards Inserted by JS -->
+          </div>
+
+          <!-- Academic Feedback Panel -->
+          <div class="feedback-panel" id="feedback-panel">
+            <div class="feedback-title" id="feedback-title">✓ 학술적 논박 성공!</div>
+            <div id="feedback-body">
+              데카르트는 모든 것을 의심하더라도 '의심하고 있는 나 자신의 사유 작용' 그 자체는 부정할 수 없음을 간파했습니다. 이것이 *Cogito ergo sum* 명제의 핵심입니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         3. GLOSSARY SCREEN
+         ========================================== -->
+    <div id="screen-glossary" class="screen">
+      <div class="glossary-header">
+        <h2>📜 근대 철학 핵심 사안 사전</h2>
+        <button class="btn btn-sm" onclick="showScreen('screen-start')">🔙 메인으로</button>
+      </div>
+
+      <div class="glossary-nav" id="glossary-nav">
+        <!-- Dynamic Tabs -->
+      </div>
+
+      <div class="glossary-content-card" id="glossary-content">
+        <!-- Dynamic Content -->
+      </div>
+    </div>
+
+    <!-- ==========================================
+         4. RANKING BOARD (HALL OF FAME)
+         ========================================== -->
+    <div id="screen-ranking" class="screen">
+      <div class="ranking-header">
+        <h2>🏆 명예의 전당 (Hall of Fame)</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-sm btn-danger" onclick="clearRankingRecords()">🗑️ 기록 초기화</button>
+          <button class="btn btn-sm" onclick="showScreen('screen-start')">🔙 메인으로</button>
+        </div>
+      </div>
+
+      <div class="ranking-table-container">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">순위</th>
+              <th>닉네임</th>
+              <th>최종 점수</th>
+              <th>획득 칭호</th>
+              <th>달성 스테이지</th>
+              <th>기록 일시</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-tbody">
+            <!-- Dynamic Rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         5. RESULT SCREEN
+         ========================================== -->
+    <div id="screen-result" class="screen">
+      <div class="result-card">
+        <span class="badge-tag">BATTLE COMPLETE</span>
+        <h2>철학적 탐구 완료!</h2>
+        
+        <div class="grade-stamp" id="result-grade">S</div>
+        <div class="result-score" id="result-score-text">TOTAL SCORE: 1250</div>
+
+        <p class="result-eval" id="result-eval-text">
+          당신은 근대 합리론부터 비판철학, 초인의 철학에 이르기까지 비판적 사유의 정수를 완벽히 증명해냈습니다!
+        </p>
+
+        <div style="display: flex; gap: 12px; width: 100%; margin-top: 15px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="restartGame()">🔄 다시 도전하기</button>
+          <button class="btn" style="flex:1;" onclick="showScreen('screen-ranking')">🏆 순위 확인</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+     JAVASCRIPT LOGIC
+     ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. GAME DATA & STAGES CONFIGURATION
+       ========================================================================== */
+    const GAME_STAGES = [
+      {
+        id: 1,
+        philosopher: "르네 데카르트 (René Descartes)",
+        tagline: "방법적 회의 & 코기토 (Cogito Ergo Sum)",
+        avatar: "🧠",
+        hp: 100,
+        dialogueStart: "자네가 감각하는 모든 것은 악마의 환환이나 꿈일지 모른다. 결코 의심할 수 없는 확실한 진리를 제시할 수 있겠는가?",
+        rounds: [
+          {
+            title: "사유 실험: 감각의 불확실성과 회의",
+            question: "전능한 악마가 너의 오관(감각)을 완전히 속이고 있다고 가정하자. 그렇다면 이 세상에서 의심할 수 없는 유일한 절대적 명제는 무엇인가?",
+            cards: [
+              {
+                concept: "Cogito Ergo Sum",
+                icon: "💡",
+                text: "모든 것을 의심하더라도, '의심하고 있는 나 자신의 사유 작용'의 존재는 의심할 수 없다.",
+                isCorrect: true,
+                feedback: "정답입니다! 데카르트는 *방법적 회의*를 거쳐, 사유하는 주체로서의 '나'의 존재(*Cogito, ergo sum*)야말로 모든 지식의 확고한 첫 번째 원리임을 입증했습니다."
+              },
+              {
+                concept: "감각적 실재론",
+                icon: "👁️",
+                text: "눈으로 직접 보고 손으로 만질 수 있는 물질적 대상은 절대적 진리이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 데카르트에 따르면 감각은 신기루나 착시, 꿈에 의해 쉽게 기만당하므로 지식의 확실한 기초가 될 수 없습니다."
+              },
+              {
+                concept: "회의주의의 포기",
+                icon: "🏳️",
+                text: "모든 것이 의심스럽다면 지식을 구하는 것 자체가 불가능하므로 포기한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 데카르트의 회의는 회의 자체로 끝나기 위한 것이 아니라, 의심 불가능한 진리에 도달하기 위한 '방법적 회의'입니다."
+              }
+            ]
+          },
+          {
+            title: "논쟁 배틀: 본유관념과 명료성",
+            question: "수학적 진리나 완전한 신의 관념은 어디서 오는가? 경험에서 귀납적으로 유도된 것인가?",
+            cards: [
+              {
+                concept: "본유관념 (Innate Ideas)",
+                icon: "✨",
+                text: "불완전한 인간이 완전성의 관념을 만들 수 없으므로, 이성에 내재된 명료하고 판명한 본유관념이다.",
+                isCorrect: true,
+                feedback: "정답입니다! 데카르트는 완전함과 무한함의 관념은 불완전한 경험이 아닌 이성에 본래 내재된 *본유관념(Idea innata)*이라 주장했습니다."
+              },
+              {
+                concept: "경험적 귀납",
+                icon: "🔍",
+                text: "수학적 원리는 수많은 관찰 데이터를 수집하여 경험적으로 얻어낸 통계적 결론이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 합리론자인 데카르트는 수학적 진리가 경험 이전의 이성적 직관과 연역적 추론에 의해 증명된다고 보았습니다."
+              },
+              {
+                concept: "사회적 관습",
+                icon: "🗣️",
+                text: "완전성이나 수학적 관념은 언어 교육과 사회적 합의에 의해 형성된 규칙이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 데카르트는 보편 타당한 명료하고 판명한 진리는 사회적 합의를 넘어 이성의 보편성에 기인한다고 보았습니다."
+              }
+            ]
+          },
+          {
+            title: "학설 논박: 심신이원론의 한계 비판",
+            question: "데카르트는 정신(사유)과 육체(연장)를 완전히 분리된 두 실체로 보았다. 이에 대한 결정적 사유적 반론은 무엇인가?",
+            cards: [
+              {
+                concept: "상호작용의 딜레마",
+                icon: "⚖️",
+                text: "비물질적인 정신과 물질적인 육체가 어떻게 상호작용하는지(송과선 설) 설명이 비논리적이다.",
+                isCorrect: true,
+                feedback: "훌륭합니다! 데카르트의 *심신이원론(Mind-Body Dualism)*은 물질과 비물질의 상호작용 메커니즘을 명확히 설명하지 못해 이후 스피노자와 훔의 집중적 비판을 받았습니다."
+              },
+              {
+                concept: "정신 유일론",
+                icon: "👻",
+                text: "육체는 아예 존재하지 않으며 오직 정신만이 우주 전체에 유일하게 존재한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 데카르트는 연장(Extension)을 속성으로 하는 물질적 실체(육체)의 존재를 인정했습니다."
+              },
+              {
+                concept: "기계론적 기계주의",
+                icon: "⚙️",
+                text: "인간과 동물은 아무런 자유 없이 정교하게 톱니바퀴처럼 움직이는 시계태엽 기계에 불과하다.",
+                isCorrect: false,
+                feedback: "부분적 오답입니다. 데카르트는 동물은 기계로 보았으나 인간은 '사유하는 정신'을 지닌 존재로 구분했습니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 2,
+        philosopher: "바루흐 스피노자 (Baruch Spinoza)",
+        tagline: "유일 실체론 & 신즉자연 (Deus sive Natura)",
+        avatar: "🌌",
+        hp: 100,
+        dialogueStart: "데카르트처럼 정신과 물질을 별개로 나눈다면 우주는 파편화된다. 오직 하나의 무한한 실체만이 존재할 뿐이다!",
+        rounds: [
+          {
+            title: "사유 실험: 신과 자연의 일체성",
+            question: "세계의 창조주인 신과 피조물인 자연은 분리된 존재인가?",
+            cards: [
+              {
+                concept: "신즉자연 (Deus sive Natura)",
+                icon: "🌿",
+                text: "신과 자연은 별개가 아니며, 자연 그 자체가 무한한 유일 실체(신)이다.",
+                isCorrect: true,
+                feedback: "정답입니다! 스피노자는 *에티카(Ethica)*에서 전통적 인격신을 거부하고, 우주 전체가 하나의 유일한 실체이자 신이라는 *범신론(Pantheism)*을 입증했습니다."
+              },
+              {
+                concept: "초월적 창조주",
+                icon: "☁️",
+                text: "신은 자연 외부에 존재하며 우주를 무에서 창조하고 통치하는 인격적 존재이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 스피노자는 신이 우주 외부에서 개입하는 인격신이 아니라 자연의 내재적 원인(Substance)이라 논박했습니다."
+              },
+              {
+                concept: "다원적 무기물론",
+                icon: "🪨",
+                text: "신은 존재하지 않으며 세상은 수많은 독립된 입자들의 우연한 결합일 뿐이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 스피노자는 철저한 일원론자로서 모든 양태가 유일한 무한 실체 안에 존재한다고 보았습니다."
+              }
+            ]
+          },
+          {
+            title: "논쟁 배틀: 자유의지와 결정론",
+            question: "인간은 자기 의지대로 자유롭게 선택할 수 있는 독립적 '자유의지'를 가지고 있는가?",
+            cards: [
+              {
+                concept: "이성적 필연성 인식",
+                icon: "🔗",
+                text: "자유의지는 원인을 알지 못하는 무지의 환상이다. 진정한 자유는 필연성을 이해하고 받아들이는 것이다.",
+                isCorrect: true,
+                feedback: "정답입니다! 스피노자에게 인간의 선택은 자연의 거대한 인과쇄석 속에 결정되어 있으며, 필연성을 이성적으로 인식할 때 예속에서 벗어나 진정한 자유를 얻습니다."
+              },
+              {
+                concept: "절대적 비결정론",
+                icon: "🎲",
+                text: "인간의 영혼은 자연 법칙에 전혀 구속받지 않는 완전한 자율적 선택 권한을 가진다.",
+                isCorrect: false,
+                feedback: "오답입니다. 스피노자는 돌멩이가 의식을 가진다면 자신이 자유롭게 구른다고 믿을 것이라는 비유로 인간의 비결정론적 자유의지를 규탄했습니다."
+              },
+              {
+                concept: "숙명론적 포기",
+                icon: "🌧️",
+                text: "모든 것이 결정되어 있으므로 어떠한 노력이나 사유도 무의미하다.",
+                isCorrect: false,
+                feedback: "오답입니다. 스피노자의 결정론은 수동적 포기가 아니라 이성적 이해를 통한 능동적 삶의 태도(*Amor Fati*의 맹아)를 지향합니다."
+              }
+            ]
+          },
+          {
+            title: "학설 논박: 정념의 극복과 최고 행복",
+            question: "인간을 불안과 슬픔에 빠뜨리는 수동적 정념(Passions)에서 벗어나 영원한 기쁨에 도달하는 방법은?",
+            cards: [
+              {
+                concept: "신에 대한 이성적 지적 사랑",
+                icon: "☀️",
+                text: "정념에 대해 명료한 관념을 형성하여 사물을 영원의 관점(Sub specie aeternitatis)에서 이해한다.",
+                isCorrect: true,
+                feedback: "완벽합니다! 스피노자는 정념의 원인을 이성적으로 명료하게 파악함으로써 정념을 능동적 정서로 전환하고 '신에 대한 지적 사랑'에 도달할 수 있다고 보았습니다."
+              },
+              {
+                concept: "감각적 욕망 충족",
+                icon: "🍇",
+                text: "쾌락을 극대화하고 본능적 욕구를 한계까지 충족시킴으로써 괴로움을 없앤다.",
+                isCorrect: false,
+                feedback: "오답입니다. 외적 원인에 휘둘리는 감각적 쾌락은 또 다른 예속과 정념의 노예 상태를 낳을 뿐입니다."
+              },
+              {
+                concept: "금욕주의적 고행",
+                icon: "🕯️",
+                text: "모든 욕망과 신체적 반응을 악으로 규정하고 육체를 학대하여 이성을 지킨다.",
+                isCorrect: false,
+                feedback: "오답입니다. 스피노자는 코나투스(Conatus, 자기 보존 욕구)를 긍정하였으며, 금욕이 아닌 이성적 자각을 강조했습니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 3,
+        philosopher: "존 로크 & 데이비드 흄 (Locke & Hume)",
+        tagline: "영국 경험론 & 인과성의 회의적 해체",
+        avatar: "📜",
+        hp: 100,
+        dialogueStart: "본유관념이란 없다! 인간의 마음은 백지(Tabula Rasa)이며, 인과관계조차 습관에 불과하다!",
+        rounds: [
+          {
+            title: "사유 실험: 로크의 백지설",
+            question: "인간은 태어날 때 도덕 원리나 수학적 관념을 미리 가지고 태어나는가?",
+            cards: [
+              {
+                concept: "타불라 라사 (Tabula Rasa)",
+                icon: "📄",
+                text: "마음은 백지 상태로 태어나며, 모든 지식은 오직 감각과 반성이라는 경험에서 유래한다.",
+                isCorrect: true,
+                feedback: "정답입니다! 존 로크는 *인간오성론*에서 마음은 백지(Tabula Rasa)와 같으며 모든 지식의 원천은 경험(Experience)이라고 선언했습니다."
+              },
+              {
+                concept: "본유 관념의 승인",
+                icon: "💎",
+                text: "태어날 때부터 영혼에 각인된 신과 인과성의 보편 관념이 이미 수록되어 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 로크는 어린이나 바보가 보편적 본유관념을 인지하지 못한다는 사실을 들어 합리론의 본유관념을 강하게 비판했습니다."
+              },
+              {
+                concept: "선험적 범주론",
+                icon: "🧩",
+                text: "경험 이전에 이미 오성에 12가지 정교한 판단 틀이 내장되어 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 이는 후대 임마누엘 칸트의 비판철학적 관점입니다."
+              }
+            ]
+          },
+          {
+            title: "논쟁 배틀: 흄의 인과성 비판",
+            question: "당구공 A가 움직여 당구공 B에 충돌할 때, A가 B의 움직임의 필연적 '원인'임을 수리적으로 증명할 수 있는가?",
+            cards: [
+              {
+                concept: "습관과 항상적 결합",
+                icon: "🎱",
+                text: "인과성은 객관적 필연성이 아니라, 사건의 반복적 항상적 결합에 따른 심리적 습관(Custom)일 뿐이다.",
+                isCorrect: true,
+                feedback: "정답입니다! 데이비드 흄은 *인간오성연구*에서 우리가 관찰할 수 있는 것은 사건의 연쇄일 뿐, '필연적 연결'의 관념은 습관에 불과하다고 지적하여 귀납법을 해체했습니다."
+              },
+              {
+                concept: "객관적 인과 법칙",
+                icon: "📐",
+                text: "자연계에는 눈에 보이지 않는 물리학적 인과율이라는 절대적 실체가 내재해 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 흄은 경험을 넘어서는 어떠한 '필연적 연결 힘'도 감각적으로 관찰할 수 없다고 반론을 제기했습니다."
+              },
+              {
+                concept: "신성한 섭리",
+                icon: "⛪",
+                text: "신이 매 순간 당구공 A와 B가 이어서 움직이도록 지속적으로 창조하고 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 이는 말브랑슈의 기회원인론(Occasionalism)이며 경험론의 회의론적 분석과 다릅니다."
+              }
+            ]
+          },
+          {
+            title: "학설 논박: 자아 실체성의 해체",
+            question: "내면을 깊이 관조할 때, 우리는 '나(Self)'라는 고정불변한 영혼 실체를 포착할 수 있는가?",
+            cards: [
+              {
+                concept: "지각의 다발 (Bundle Theory)",
+                icon: "🌊",
+                text: "고정된 자아 실체는 없으며, 끊임없이 변화하는 지각들의 다발(Bundle of Perceptions)만 존재한다.",
+                isCorrect: true,
+                feedback: "완벽합니다! 흄은 내면을 아무리 관찰해도 끊임없이 지나가는 생각, 느낌, 지각만 발견될 뿐 독립된 '자아 실체'는 하나의 환상에 불과함을 밝혔습니다."
+              },
+              {
+                concept: "불변의 사유주체",
+                icon: "🏛️",
+                text: "지각이 바뀌어도 그 바탕에 항상 존재하는 불멸의 정신 실체가 존재한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 흄은 이러한 불변 자아관을 데카르트적 환상이라 물리쳤습니다."
+              },
+              {
+                concept: "육체적 뇌 세포",
+                icon: "🧠",
+                text: "자아란 오직 해부학적 뇌 신경 세포의 물리적 전기 작용 그 자체이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 흄의 회의론은 물질 실체 또한 지각의 연쇄일 뿐이라고 보아 유물론적 단정조차 경계했습니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 4,
+        philosopher: "임마누엘 칸트 (Immanuel Kant)",
+        tagline: "선험적 비판철학 & 코페르니쿠스적 전환",
+        avatar: "⚖️",
+        hp: 100,
+        dialogueStart: "합리론의 독단과 경험론의 회의론을 모두 넘어서겠다! 인식이 대상에 맞추는 것이 아니라 대상이 인식에 맞춰진다!",
+        rounds: [
+          {
+            title: "사유 실험: 코페르니쿠스적 전환",
+            question: "인간의 인식 과정은 외부 대상을 그대로 수동적으로 복사하는 것인가?",
+            cards: [
+              {
+                concept: "선험적 구성설 (Copernican Revolution)",
+                icon: "🔄",
+                text: "대상이 인식을 정하는 것이 아니라, 주관의 선험적 틀(시간·공간 & 12범주)이 대상을 구성한다.",
+                isCorrect: true,
+                feedback: "정답입니다! 칸트는 *순수이성비판*에서 인간 주관의 선험적 형식이 감각 데이터를 구성한다는 '코페르니쿠스적 전환'을 이루었습니다."
+              },
+              {
+                concept: "수동적 거울 반응",
+                icon: "🪞",
+                text: "인간 오성은 사물 자체의 성질을 그대로 찍어내는 투명한 거울과 같다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트에 따르면 감성적 직관과 오성적 범주가 개입하지 않는 순수 외부 대상 전사는 불가능합니다."
+              },
+              {
+                concept: "주관적 환각론",
+                icon: "🌀",
+                text: "외부 세계는 아예 존재하지 않으며 주관이 만든 완벽한 허구의 세계이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트는 외부 자극(물자체)의 존재를 인정하였으나 그것이 우리 인식 틀을 통해 현상(Phenomena)으로 나타난다고 보았습니다."
+              }
+            ]
+          },
+          {
+            title: "논쟁 배틀: 이성의 통합 명제",
+            question: "독단에 빠진 합리론과 회의론에 빠진 경험론을 어떻게 유기적으로 종합할 것인가?",
+            cards: [
+              {
+                concept: "직관과 개념의 유기적 결합",
+                icon: "⚙️",
+                text: "내용 없는 사고는 빈 것이고, 개념 없는 직관은 맹목이다. (둘의 종합 필요)",
+                isCorrect: true,
+                feedback: "명언입니다! 칸트는 감성을 통한 직관(경험적 내용)과 오성을 통한 개념(합리적 형식)이 결합해야만 진정한 지식이 성립한다고 정립했습니다."
+              },
+              {
+                concept: "순수 합리론 편향",
+                icon: "📐",
+                text: "경험은 배제하고 오로지 순수 이성적 추론만으로 우주 전체의 진리를 완벽히 깨달을 수 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트는 직관(경험적 수용성)이 빠진 순수 이성의 도약은 '독단적 형이상학'에 불과하다고 배격했습니다."
+              },
+              {
+                concept: "극단적 회의론 편향",
+                icon: "🌫️",
+                text: "어떠한 보편 타당한 진리도 불가능하므로 개별적 경험 감각만을 신뢰해야 한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트는 수학과 자연과학의 보편 타당한 '선험적 종합판단'의 가능성을 증명하고자 했습니다."
+              }
+            ]
+          },
+          {
+            title: "학설 논박: 현상과 물자체 (Phenomena vs Noumena)",
+            question: "인간은 이성을 통해 세계의 궁극적 본질(신, 영혼의 불멸, 자유) 그 자체를 인식할 수 있는가?",
+            cards: [
+              {
+                concept: "현상과 물자체의 구분",
+                icon: "🏔️",
+                text: "우리는 현상(Phenomena)만 인식할 수 있으며, 물자체(Noumena)는 순수이성의 한계 넘어에 있다.",
+                isCorrect: true,
+                feedback: "정답입니다! 칸트는 순수이성이 인식할 수 있는 범위를 현상계로 제한하였으며, 물자체와 신, 자유 등은 *실천이성*의 요청 영역으로 남겨두었습니다."
+              },
+              {
+                concept: "절대적 무제한 인식",
+                icon: "👁️‍🗨️",
+                text: "이성의 능력은 무한하므로 신의 본질과 세계의 끝까지 완벽히 지식화할 수 있다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트는 이성이 한계를 넘어 물자체를 알려고 할 때 이율배반(Antinomy)이라는 치명적 오류에 빠진다고 경고했습니다."
+              },
+              {
+                concept: "물자체의 불존재",
+                icon: "💨",
+                text: "현상 뒤에 숨겨진 물자체 같은 것은 존재하지 않으며 보이는 것이 전부이다.",
+                isCorrect: false,
+                feedback: "오답입니다. 칸트는 우리가 인식할 수 없을 뿐, 현상의 원인이 되는 물자체(Ding an sich)의 존재 자체를 부정하지는 않았습니다."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 5,
+        philosopher: "프리드리히 니체 (Friedrich Nietzsche)",
+        tagline: "망치를 든 철학 & 위버멘시 (Übermensch)",
+        avatar: "⚡",
+        hp: 100,
+        dialogueStart: "신은 죽었다! 기존의 절대적 도덕과 형이상학이라는 우상을 망치로 부수고, 새로운 가치를 창조하라!",
+        rounds: [
+          {
+            title: "사유 실험: 신의 죽음과 허무주의",
+            question: "초월적 최고 가치(신, 형이상학적 진리)가 무너진 '허무주의(Nihilism)' 시대에 인간이 취해야 할 태도는?",
+            cards: [
+              {
+                concept: "능동적 허무주의 & 가치 창조",
+                icon: "🔥",
+                text: "초월적 세계에 의존하지 않고 적극적 허무주의를 통해 스스로 삶의 의미와 가치를 창조한다.",
+                isCorrect: true,
+                feedback: "정답입니다! 니체는 *짜라투스트라는 이렇게 말했다*에서 신의 죽음 이후 소극적 허무주의에 빠지는 대신 스스로 가치를 입법하는 창조자가 되어야 한다고 강조했습니다."
+              },
+              {
+                concept: "전통적 전통 복귀",
+                icon: "🏛️",
+                text: "허무주의는 위험하므로 중세적 종교 신앙과 전통 도덕 규범으로 다시 돌아가야 한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 니체는 그것이야말로 삶의 의지를 약화시키는 내세 중심적 '노예 도덕'의 연속이라고 보았습니다."
+              },
+              {
+                concept: "수동적 비관론",
+                icon: "🕳️",
+                text: "삶에는 아무런 목적도 없으므로 모든 욕망을 끄고 허무 속에서 소멸을 기다린다.",
+                isCorrect: false,
+                feedback: "오답입니다. 니체는 수동적 허무주의를 강하게 비판하였으며 강인한 삶의 긍정을 부르짖었습니다."
+              }
+            ]
+          },
+          {
+            title: "논쟁 배틀: 힘에의 의지와 위버멘시",
+            question: "약자의 시기심(르상티망)에 기반한 동정심 도덕을 극복하는 위대한 삶의 형태는?",
+            cards: [
+              {
+                concept: "위버멘시 (Übermensch / 초인)",
+                icon: "🦅",
+                text: "자신의 한계를 끊임없이 극복하고 자기 자신을 뛰어넘는 위버멘시로서 삶과 고통을 긍정한다.",
+                isCorrect: true,
+                feedback: "정답입니다! 니체는 인간을 자기 극복의 과정으로 보았으며, 힘에의 의지(Wille zur Macht)를 바탕으로 고통조래 긍정하는 '위버멘시'를 제시했습니다."
+              },
+              {
+                concept: "최후의 인간 (Last Man)",
+                icon: "🛋️",
+                text: "갈등이나 도전 없이 적당한 안락함과 평범한 안주를 최우선으로 삼는 삶.",
+                isCorrect: false,
+                feedback: "오답입니다. 니체는 창조적 열정 없이 안락만을 추구하는 자를 경멸스러운 '최후의 인간'이라 칭했습니다."
+              },
+              {
+                concept: "금욕적 성자",
+                icon: "🕯️",
+                text: "세속적 욕망을 모두 악으로 규정하고 육체적 삶을 부정하는 내세 지향적 성자의 삶.",
+                isCorrect: false,
+                feedback: "오답입니다. 니체는 삶을 부정하는 성자 도덕이야말로 디오니소스적 생명력을 억압하는 병든 도덕이라고 비판했습니다."
+              }
+            ]
+          },
+          {
+            title: "학설 논박: 영원회귀와 운명애",
+            question: "네 삶의 모든 기쁨과 눈물, 고통이 토씨 하나 틀리지 않고 무한히 반복된다는 '영원회귀'의 시험이 내린다면?",
+            cards: [
+              {
+                concept: "아모르 파티 (Amor Fati / 운명애)",
+                icon: "☀️",
+                text: "그 삶의 모든 순간을 무한히 사랑하고 긍정하며 '다시 한번!'을 외치는 운명애를 선택한다.",
+                isCorrect: true,
+                feedback: "완벽한 철학적 승리입니다! 니체의 *영원회귀(Ewige Wiederkunft)* 사상은 삶의 모든 고통과 필연성까지 미치도록 사랑하는 *Amor Fati*를 통해 삶의 시련을 궁극적으로 승화시킵니다."
+              },
+              {
+                concept: "운명에 대한 저주",
+                icon: "⚡",
+                text: "왜 나에게만 이런 고통스러운 삶이 무한 반복되는가 불평하며 운명을 탓한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 운명을 탓하는 것은 삶의 생명력을 스스로 깎아먹는 저열한 태도입니다."
+              },
+              {
+                concept: "윤회와 해탈 추구",
+                icon: "🧘",
+                text: "업보를 쌓지 않아 영원회귀의 고리를 끊어내고 가상 세계로 탈출하고자 한다.",
+                isCorrect: false,
+                feedback: "오답입니다. 니체는 대지(Earth)에 충실할 것을 요구하며 세계 탈출적 해탈관을 부정했습니다."
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    // Philosophy Glossary Data
+    const GLOSSARY_DATA = [
+      {
+        id: "descartes",
+        name: "르네 데카르트 (René Descartes)",
+        period: "1596 - 1650 (근대 합리론의 시조)",
+        quote: "나는 생각한다, 고로 존재한다 (Cogito, ergo sum)",
+        avatar: "🧠",
+        concepts: [
+          { title: "방법적 회의", desc: "의심 불가능한 확실한 진리를 찾기 위해 감각, 꿈, 나아가 악마의 기만까지 모든 것을 철저히 의심하는 방법론." },
+          { title: "Cogito 명제", desc: "모든 것을 의심하더라도 '의심하고 있는 나의 사유'는 부정할 수 없다는 지식의 확고한 기초." },
+          { title: "본유관념 & 심신이원론", desc: "이성에 내재된 명료하고 판명한 관념. 정신(사유물속)과 육체(연장물속)를 분리된 두 실체로 규정." }
+        ]
+      },
+      {
+        id: "spinoza",
+        name: "바루흐 스피노자 (Baruch Spinoza)",
+        period: "1632 - 1677 (범신론적 일원론자)",
+        quote: "신 즉 자연 (Deus sive Natura)",
+        avatar: "🌌",
+        concepts: [
+          { title: "유일 실체론", desc: "독립적으로 존재하는 실체는 오직 하나(신=자연)뿐이며, 정신과 물질은 이 유일 실체의 속성에 불과함." },
+          { title: "필연성과 자유", desc: "자유의지는 무지의 환상임. 진정한 자유는 자연의 필연적 인과법칙을 이성적으로 이해하는 것." },
+          { title: "신에 대한 지적 사랑", desc: "사물을 영원의 관점에서 파악하여 정념의 예속에서 벗어나 영원한 평정과 기쁨에 도달하는 삶." }
+        ]
+      },
+      {
+        id: "locke",
+        name: "존 로크 (John Locke)",
+        period: "1632 - 1704 (영국 경험론의 완성자)",
+        quote: "인간의 마음은 아무것도 적혀있지 않은 백지이다.",
+        avatar: "📄",
+        concepts: [
+          { title: "Tabula Rasa (백지설)", desc: "인간은 본유관념 없이 태어나며, 모든 지식의 원천은 외부 감각과 내적 반성이라는 경험에서 비롯됨." },
+          { title: "제1성질과 제2성질", desc: "모양·크기 등 객관적 제1성질과 색·맛·냄새 등 주관적 감각인 제2성질을 구별함." }
+        ]
+      },
+      {
+        id: "hume",
+        name: "데이비드 흄 (David Hume)",
+        period: "1711 - 1776 (철저한 회의론적 경험론자)",
+        quote: "인과성은 객관적 필연성이 아니라 심리적 습관이다.",
+        avatar: "📜",
+        concepts: [
+          { title: "인과성 비판", desc: "원인과 결과의 필연적 연결은 경험할 수 없으며, 단지 사건의 반복적 항상적 결합에 의한 습관에 불과함." },
+          { title: "자아 해체 (지각의 다발)", desc: "고정된 자아 실체는 존재하지 않으며, 끊임없이 오고 가는 지각의 다발만 존재함." }
+        ]
+      },
+      {
+        id: "kant",
+        name: "임마누엘 칸트 (Immanuel Kant)",
+        period: "1724 - 1804 (독일 비판철학의 거장)",
+        quote: "내용 없는 사고는 빈 것이고, 개념 없는 직관은 맹목이다.",
+        avatar: "⚖️",
+        concepts: [
+          { title: "코페르니쿠스적 전환", desc: "인식 주관(시공간 선험적 형식 & 12범주)이 수용된 경험 데이터를 구성하여 대상을 형성함." },
+          { title: "현상과 물자체", desc: "우리가 인식 가능한 것은 인간 틀을 거친 현상(Phenomena)뿐이며, 물자체(Noumena)는 이성의 한계 밖임." },
+          { title: "정언명령 (Categorical Imperative)", desc: "조건 없는 도덕적 의무. '네 의지의 한계가 보편적 입법의 원리가 되도록 행위하라.'" }
+        ]
+      },
+      {
+        id: "nietzsche",
+        name: "프리드리히 니체 (Friedrich Nietzsche)",
+        period: "1844 - 1900 (망치를 든 철학자)",
+        quote: "신은 죽었다! 대지에 충실하라!",
+        avatar: "⚡",
+        concepts: [
+          { title: "신의 죽음 & 가치 재평가", desc: "초월적 형이상학과 전통 도덕의 절대성 해체. 능동적 허무주의를 통해 스스로 가치를 창조함." },
+          { title: "위버멘시 & 힘에의 의지", desc: "자신의 한계를 극복하는 자기 초월자(Übermensch)이자 생명력의 본질로서의 힘에의 의지." },
+          { title: "영원회귀 & Amor Fati", desc: "동일한 삶의 무한 반복을 긍정하고 삶의 모든 시련과 운명을 뜨겁게 사랑하는 태도." }
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       2. AUDIO SYNTHESIZER (WEB AUDIO API - ZERO EXTERNAL FILE DEPENDENCY)
+       ========================================================================== */
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type, duration, gainValue = 0.1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainValue, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+
+      click() {
+        this.playTone(400, 'sine', 0.08, 0.05);
+      }
+
+      correct() {
+        this.playTone(523.25, 'sine', 0.15, 0.1); // C5
+        setTimeout(() => this.playTone(659.25, 'sine', 0.15, 0.1), 100); // E5
+        setTimeout(() => this.playTone(783.99, 'sine', 0.3, 0.12), 200); // G5
+      }
+
+      wrong() {
+        this.playTone(180, 'sawtooth', 0.25, 0.12);
+        setTimeout(() => this.playTone(130, 'sawtooth', 0.3, 0.12), 120);
+      }
+
+      victory() {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((n, i) => {
+          setTimeout(() => this.playTone(n, 'triangle', 0.3, 0.12), i * 150);
+        });
+      }
+    }
+
+    const sfx = new SoundFX();
+
+    function toggleAudio() {
+      sfx.enabled = !sfx.enabled;
+      document.getElementById('audio-toggle-btn').textContent = sfx.enabled ? '🔊' : '🔇';
+    }
+
+    /* ==========================================================================
+       3. STATE MANAGEMENT
+       ========================================================================== */
+    let gameState = {
+      nickname: "",
+      currentStageIdx: 0,
+      currentRoundIdx: 0,
+      playerHp: 100,
+      bossHp: 100,
+      score: 0,
+      streak: 0,
+      isLocked: false
+    };
+
+    /* ==========================================================================
+       4. NAVIGATION & SCREEN CONTROL
+       ========================================================================== */
+    function showScreen(screenId) {
+      sfx.click();
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      if (screenId === 'screen-glossary') {
+        renderGlossary();
+      } else if (screenId === 'screen-ranking') {
+        renderRankingTable();
+      }
+    }
+
+    /* ==========================================================================
+       5. GAME FLOW CONTROLLER
+       ========================================================================== */
+    function startGame() {
+      const input = document.getElementById('player-nickname');
+      const nickname = input.value.trim() || "익명의 사유자";
+      
+      gameState = {
+        nickname: nickname,
+        currentStageIdx: 0,
+        currentRoundIdx: 0,
+        playerHp: 100,
+        bossHp: 100,
+        score: 0,
+        streak: 0,
+        isLocked: false
+      };
+
+      showScreen('screen-battle');
+      loadStage(0);
+    }
+
+    function restartGame() {
+      showScreen('screen-start');
+    }
+
+    function loadStage(stageIdx) {
+      const stage = GAME_STAGES[stageIdx];
+      gameState.currentStageIdx = stageIdx;
+      gameState.currentRoundIdx = 0;
+      gameState.bossHp = stage.hp;
+
+      // Update UI elements
+      document.getElementById('stage-num-badge').textContent = `STAGE ${stage.id}`;
+      document.getElementById('stage-title-text').textContent = stage.philosopher;
+      document.getElementById('boss-avatar').textContent = stage.avatar;
+      document.getElementById('boss-name').textContent = stage.philosopher;
+      document.getElementById('boss-tagline').textContent = stage.tagline;
+      document.getElementById('boss-dialogue').textContent = `"${stage.dialogueStart}"`;
+
+      updateHpBars();
+      loadRound(0);
+    }
+
+    function loadRound(roundIdx) {
+      const stage = GAME_STAGES[gameState.currentStageIdx];
+      const round = stage.rounds[roundIdx];
+      gameState.currentRoundIdx = roundIdx;
+      gameState.isLocked = false;
+
+      // Reset feedback panel
+      const fbPanel = document.getElementById('feedback-panel');
+      fbPanel.style.display = 'none';
+      fbPanel.className = 'feedback-panel';
+
+      // Update Round Info
+      document.getElementById('round-tag').textContent = `ROUND ${roundIdx + 1}/3`;
+      document.getElementById('question-title').textContent = round.title;
+      document.getElementById('question-text').textContent = round.question;
+
+      // Render Cards
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
+
+      round.cards.forEach((card, idx) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'battle-card';
+        cardEl.onclick = () => handleCardSelect(card, cardEl);
+
+        cardEl.innerHTML = `
+          <div class="card-meta">
+            <span class="card-concept">${card.concept}</span>
+            <span class="card-icon">${card.icon}</span>
+          </div>
+          <div class="card-text">${card.text}</div>
+        `;
+        container.appendChild(cardEl);
+      });
+
+      document.getElementById('score-display').textContent = gameState.score;
+    }
+
+    function handleCardSelect(card, cardEl) {
+      if (gameState.isLocked) return;
+      gameState.isLocked = true;
+
+      const fbPanel = document.getElementById('feedback-panel');
+      const fbTitle = document.getElementById('feedback-title');
+      const fbBody = document.getElementById('feedback-body');
+
+      fbPanel.style.display = 'block';
+
+      if (card.isCorrect) {
+        sfx.correct();
+        gameState.streak++;
+        const streakBonus = gameState.streak * 20;
+        const pts = 100 + streakBonus;
+        gameState.score += pts;
+
+        // Damage Boss
+        const dmg = 34; // 3 rounds kill boss (100 HP)
+        gameState.bossHp = Math.max(0, gameState.bossHp - dmg);
+        showDmgEffect(cardEl, `-34 HP`, '#ef4444');
+
+        fbPanel.className = 'feedback-panel correct';
+        fbTitle.textContent = `✓ 학술적 논박 성공! (+${pts} Pts)`;
+        fbBody.textContent = card.feedback;
+
+        cardEl.style.borderColor = 'var(--accent-emerald)';
+        cardEl.style.boxShadow = '0 0 20px rgba(52, 211, 153, 0.4)';
+      } else {
+        sfx.wrong();
+        gameState.streak = 0;
+        const penalty = 20;
+        gameState.playerHp = Math.max(0, gameState.playerHp - penalty);
+        showDmgEffect(document.getElementById('player-hp-fill'), `-20 HP`, '#ef4444');
+
+        fbPanel.className = 'feedback-panel wrong';
+        fbTitle.textContent = `✗ 논리적 오류 지적당함! (이성의 빛 -20 HP)`;
+        fbBody.textContent = card.feedback;
+
+        cardEl.style.borderColor = 'var(--accent-crimson)';
+        cardEl.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.4)';
+      }
+
+      updateHpBars();
+      document.getElementById('score-display').textContent = gameState.score;
+
+      // Check Game Over or Next Round
+      setTimeout(() => {
+        if (gameState.playerHp <= 0) {
+          endGame(false);
+          return;
+        }
+
+        if (gameState.currentRoundIdx < 2) {
+          // Proceed to next round
+          loadRound(gameState.currentRoundIdx + 1);
+        } else {
+          // Stage Clear
+          if (gameState.currentStageIdx < GAME_STAGES.length - 1) {
+            alert(`🎉 STAGE ${gameState.currentStageIdx + 1} 클리어! 다음 철학자와의 논쟁으로 진행합니다.`);
+            loadStage(gameState.currentStageIdx + 1);
+          } else {
+            // Final Victory!
+            endGame(true);
+          }
+        }
+      }, 2200);
+    }
+
+    function updateHpBars() {
+      const pFill = document.getElementById('player-hp-fill');
+      const bFill = document.getElementById('boss-hp-fill');
+      const bNum = document.getElementById('boss-hp-num');
+
+      pFill.style.width = `${gameState.playerHp}%`;
+      bFill.style.width = `${gameState.bossHp}%`;
+      bNum.textContent = `${gameState.bossHp} / 100`;
+    }
+
+    function showDmgEffect(targetEl, text, color) {
+      const rect = targetEl.getBoundingClientRect();
+      const pop = document.createElement('div');
+      pop.className = 'dmg-popup';
+      pop.style.color = color;
+      pop.style.left = `${rect.left + rect.width / 2}px`;
+      pop.style.top = `${rect.top}px`;
+      pop.textContent = text;
+      document.body.appendChild(pop);
+
+      setTimeout(() => pop.remove(), 800);
+    }
+
+    function endGame(isVictory) {
+      if (isVictory) {
+        sfx.victory();
+      }
+
+      // Add remaining HP bonus
+      const hpBonus = gameState.playerHp * 5;
+      gameState.score += hpBonus;
+
+      // Evaluate Grade & Title
+      let grade = "C";
+      let title = "철학의 입문자";
+      if (gameState.score >= 1800) {
+        grade = "S";
+        title = "비판적 이성의 대가 (Master of Reason)";
+      } else if (gameState.score >= 1400) {
+        grade = "A";
+        title = "위버멘시 철학자 (Übermensch)";
+      } else if (gameState.score >= 1000) {
+        grade = "B";
+        title = "회의론의 탐구자 (Skeptic Explorer)";
+      }
+
+      document.getElementById('result-grade').textContent = grade;
+      document.getElementById('result-score-text').textContent = `TOTAL SCORE: ${gameState.score}`;
+      
+      const evalText = isVictory
+        ? `축하합니다! ${gameState.nickname}님은 6대 근대 철학자들과의 격렬한 사유 논배에서 최종 승리하여 "${title}" 칭호를 획득했습니다!`
+        : `논리가 다소 붕괴되었습니다. 이성의 빛 HP가 소진되었습니다. 다시 한번 철학 사전을 정독하고 도전해보세요!`;
+      
+      document.getElementById('result-eval-text').textContent = evalText;
+
+      // Save to localStorage Rankings
+      saveRankingRecord(gameState.nickname, gameState.score, title, gameState.currentStageIdx + (isVictory ? 1 : 0));
+
+      showScreen('screen-result');
+    }
+
+    /* ==========================================================================
+       6. LOCAL STORAGE RANKING BOARD SYSTEM
+       ========================================================================== */
+    const STORAGE_KEY = "PHILOSOPHY_BATTLE_RANKINGS";
+
+    function getRankings() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function saveRankingRecord(nickname, score, title, stageCleared) {
+      try {
+        const records = getRankings();
+        const newRecord = {
+          nickname: nickname,
+          score: score,
+          title: title,
+          stage: `${stageCleared} / 5 STAGE`,
+          date: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        };
+
+        records.push(newRecord);
+        // Sort descending by score
+        records.sort((a, b) => b.score - a.score);
+        // Keep Top 10
+        const top10 = records.slice(0, 10);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(top10));
+      } catch(e) {}
+    }
+
+    function renderRankingTable() {
+      const records = getRankings();
+      const tbody = document.getElementById('ranking-tbody');
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:30px;">등록된 명예의 전당 기록이 없습니다. 지금 첫 전설에 도전하세요!</td></tr>`;
+        return;
+      }
+
+      records.forEach((rec, idx) => {
+        const tr = document.createElement('tr');
+        const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+        const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : idx + 1));
+
+        tr.innerHTML = `
+          <td class="rank-num ${rankClass}">${medal}</td>
+          <td style="font-weight:700;">${rec.nickname}</td>
+          <td style="color:var(--accent-gold); font-weight:800; font-family:monospace;">${rec.score}</td>
+          <td><span class="title-badge">${rec.title}</span></td>
+          <td>${rec.stage}</td>
+          <td style="color:var(--text-sub); font-size:0.85rem;">${rec.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function clearRankingRecords() {
+      if (confirm("정말로 모든 명예의 전당 점수 기록을 초기화하시겠습니까?")) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch(e) {}
+        renderRankingTable();
+        alert("기록이 성공적으로 초기화되었습니다.");
+      }
+    }
+
+    /* ==========================================================================
+       7. GLOSSARY RENDERER
+       ========================================================================== */
+    function renderGlossary() {
+      const nav = document.getElementById('glossary-nav');
+      nav.innerHTML = '';
+
+      GLOSSARY_DATA.forEach((item, idx) => {
+        const tab = document.createElement('button');
+        tab.className = `glossary-tab ${idx === 0 ? 'active' : ''}`;
+        tab.textContent = item.name.split(' ')[0]; // Show short name
+        tab.onclick = () => {
+          document.querySelectorAll('.glossary-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          showGlossaryDetail(item);
+        };
+        nav.appendChild(tab);
+      });
+
+      showGlossaryDetail(GLOSSARY_DATA[0]);
+    }
+
+    function showGlossaryDetail(data) {
+      const content = document.getElementById('glossary-content');
+      let conceptsHtml = '';
+
+      data.concepts.forEach(c => {
+        conceptsHtml += `
+          <div class="concept-item">
+            <h4>• ${c.title}</h4>
+            <p>${c.desc}</p>
+          </div>
+        `;
+      });
+
+      content.innerHTML = `
+        <div class="glossary-hero">
+          <div class="glossary-avatar">${data.avatar}</div>
+          <div>
+            <h2>${data.name}</h2>
+            <p style="color:var(--accent-gold); font-size:0.95rem; margin-top:4px;">${data.period}</p>
+            <p style="color:var(--text-sub); font-style:italic; margin-top:8px;">"${data.quote}"</p>
+          </div>
+        </div>
+        <h3 style="font-size:1.1rem; color:var(--text-main);">핵심 철학 개념 정립</h3>
+        <div class="glossary-concepts">
+          ${conceptsHtml}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
